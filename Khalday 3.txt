@@ -1,0 +1,154 @@
+
+
+Noc L3/L4
+http://itsm.rivanai.com/otrs/index.pl
+admin
+C1sc0123
+
+
+NOC L1/L2
+http://itsm.rivanai.com/otrs/customer.pl
+
+user1
+C1sc0123
+
+
+
+BRM
+Customer
+Users
+add user
+User services
+
+IP address = network + host address:
+
+rule 
+1. connected by wan cable
+2. route not connected
+
+/19 = 255.255.224.0 = 3rd, 32i = 0.0.31.255
+/28 = 255.255.255.240 = 4th, 16i = 0.0.0.15
+/22 = 255.255.252.0 = 3rd, 4i = 0.0.3.255
+
+---------------------------------------------------------------
+
+CoreTaas
+
+Config T
+int fa0/9
+no sw
+no shut
+ip add 192.168.47.98 255.255.255.224
+int vlan 1
+ip add 10.51.1.2 255.255.255.0
+no shut
+end
+
+CoreBaba
+
+Config T
+int fa0/9
+no sw
+no shut
+ip add 192.168.47.135 255.255.255.224
+int vlan 1
+ip add 10.51.1.4 255.255.255.0
+no shut
+end
+
+-----------------------------------------------------------------------
+
+
+D1/c1
+config t
+router eigrp 100
+no auto-summary
+
+
+path selection:
+1. longest prefix 
+2. ad (admin distance)
+- D Eigrp : 90
+- S Static: 1
+- CL : 0 
+
+--------------------------------------------------------------------------
+
+conf t
+ router ospf 1
+  router-id 4.4.4.4
+  network 10.1.1.8 0.0.0.3 area 0
+  network 4.4.4.4 0.0.0.0 area 0
+  end
+
+
+EIGRP Vs OSPF
+
+Distance Vector
+- EIGRP
+- RIP/v2
+
+Link-State
+- OSPF
+- IS-IS
+
+
+
+
+10.0.15.64/27
+
+
+
+
+conf t
+ router bgp 3
+  bgp log-neighbor-changes
+  neighbor 35.3.5.5 remote-as 45
+  neighbor 32.3.2.2 remote-as 2
+  neighbor 209.9.9.1 remote-as 1
+  address-family ipv4
+   neighbor 35.3.5.5 activate
+   neighbor 32.3.2.2 activate
+   neighbor 209.9.9.1 activate
+   network 35.3.5.0 mask 255.255.255.0
+   network 32.3.2.0 mask 255.255.255.0
+   network 209.9.9.0 mask 255.255.255.0
+   network 33.33.33.33 mask 255.255.255.255
+   end
+
+conf t
+ router bgp 3
+  bgp log-neighbor-changes
+  neighbor 32.3.2.2 remote-as 2
+  neighbor 35.3.5.5 remote-as 45
+  neighbor 209.9.9.1 remote-as 1
+  address-family ipv4
+   neighbor 32.3.2.2 activate
+   neighbor 35.3.5.5 activate
+   neighbor 209.9.9.1 activate
+   network 209.9.9.0 mask 255.255.255.0
+   network 32.3.2.0 mask 255.255.255.0
+   network 33.33.33.33 mask 255.255.255.255
+   network 35.3.5.0 mask 255.255.255.0
+   end
+
+
+conf t
+ ip nat inside source static 10.1.4.10 209.9.9.10 
+ ip nat inside source static 10.1.4.6 207.7.7.20
+ ip nat inside source static 10.1.1.10 208.8.8.30
+ end
+show ip nat translations
+
+conf t
+ router bgp 1
+  bgp log-neighbor-changes
+  neighbor 10.0.15.90 remote-as 2
+  neighbor 172.16.160.254 remote-as 3
+  address-family ipv4
+   neighbor 10.0.15.90 activate
+   neighbor 172.16.160.254 activate
+   network 10.0.15.64 mask 255.255.255.224
+   network 172.16.160.0 mask 255.255.255.224
+   network 172.16.97.111 mask 255.255.255.255
+   end

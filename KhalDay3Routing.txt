@@ -1,0 +1,148 @@
+Day 3 routing 
+
+Static, eigrp, ospf, bgp, route redistribution
+
+configure static route r1 to r4
+
+static route:				Gateway
+
+R1: route 10.1.1.4/30 and 10.1.1.8/30   
+config t
+ip route 10.1.1.4 255.255.255.252 10.1.1.2
+ip route 10.1.1.8 255.255.255.252 10.1.1.2
+
+R2
+config t
+ip route 10.1.1.8 255.255.255.252 10.1.1.6
+
+R3
+config t
+ip route 10.1.1.0 255.255.255.252 10.1.1.5
+
+R4
+config t
+ip route 10.1.1.4 255.255.255.252 10.1.1.9
+ip route 10.1.1.0 255.255.255.252 10.1.1.9
+
+Risk Management, if fail
+
+R1: route 10.1.1.4/30 and 10.1.1.8/30   
+config t
+no ip route 10.1.1.4 255.255.255.252 10.1.1.2
+no ip route 10.1.1.8 255.255.255.252 10.1.1.2
+
+R2
+config t
+no ip route 10.1.1.8 255.255.255.252 10.1.1.6
+
+R3
+config t
+no ip route 10.1.1.0 255.255.255.252 10.1.1.5
+
+R4
+config t
+no ip route 10.1.1.4 255.255.255.252 10.1.1.9
+no ip route 10.1.1.0 255.255.255.252 10.1.1.9
+
+R4#show ip route
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP
+       a - application route
+       + - replicated route, % - next hop override, p - overrides from PfR
+
+Gateway of last resort is not set
+
+      4.0.0.0/32 is subnetted, 1 subnets
+C        4.4.4.4 is directly connected, Loopback4
+      10.0.0.0/8 is variably subnetted, 8 subnets, 2 masks
+S        10.1.1.0/30 [1/0] via 10.1.1.9
+S        10.1.1.4/30 [1/0] via 10.1.1.9
+C        10.1.1.8/30 is directly connected, Ethernet1/2
+L        10.1.1.10/32 is directly connected, Ethernet1/2
+C        10.1.4.4/30 is directly connected, Ethernet1/0
+L        10.1.4.5/32 is directly connected, Ethernet1/0
+C        10.1.4.8/30 is directly connected, Ethernet1/1
+L        10.1.4.9/32 is directly connected, Ethernet1/1
+
+
+--------------------------------------------------------------------------------
+getting/giving 2 years experience as network admin:
+
+p1:
+
+config t
+int e0/0
+no shut
+ip add 10.2.1.101 255.255.255.0
+exit
+
+ip route 0.0.0.0 0.0.0.0 10.2.1.1 1
+ip route 0.0.0.0 0.0.0.0 10.2.1.2 10
+end
+
+p2:
+
+config t
+int e1/0
+no shut
+ip add 10.2.1.102 255.255.255.0
+exit
+
+ip route 0.0.0.0 0.0.0.0 10.2.1.2 1
+ip route 0.0.0.0 0.0.0.0 10.2.1.1 10
+end
+
+A1: enter port e0/0 in VLAN10
+
+config t
+int e0/0
+switchport mode access
+switchport access vlan 10
+
+A2: enter port e1/0 in VLAN10/design
+
+config t
+int e1/0
+switchport mode access
+switchport access vlan 10
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

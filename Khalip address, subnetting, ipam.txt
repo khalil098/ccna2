@@ -1,0 +1,86 @@
+TC. 28agents. 192.168.80.0/16
+
+C - 5 bits
+S/32 - /27
+IP- 4th octet, 32i
+
+
+
+
+@D1: nike , d1, a1, p1
+D1: Accenture switch 
+config t
+vlan 3
+name nikeusa.com
+vlan 4
+name BANKOFAMERICA.COM
+vlan 5
+name TRUSTCONDOM.COM
+vlan 6
+name SANMIGUEL.COM
+
+Interface vlan 3
+ desc SVIFORNIKEUSA
+ no shut
+ ip add 172.16.16.1 255.255.240.0
+ip dhcp excluded-add 172.16.16.1 172.16.16.80
+
+ip dhcp pool NIKEUSA.com
+ network 172.16.16.0 255.255.240.0
+ default-router 172.16.16.1
+ domain-name NIKEUSA.com
+ dns-server 8.8.8.8
+
+end
+
+
+@A1:
+CONFIG T
+INT E0/0
+switchport mode access
+switchport access vlan 3
+end
+
+
+@p1:
+CONFIG T
+INT E0/0
+ip address dhcp
+no shut
+do bp
+
+D1: Trust Condom switch 
+config t
+vlan 3
+name nikeusa.com
+vlan 4
+name BANKOFAMERICA.COM
+vlan 5
+name TRUSTCONDOM.COM
+vlan 6
+name SANMIGUEL.COM
+
+Interface vlan 5
+ desc SVIFORTRUSTCONDOM
+ no shut
+ ip add 192.168.80.33 255.255.255.224
+ip dhcp excluded-add 192.168.80.33 192.168.80.35
+
+ip dhcp pool TRUSTCONDOM.com
+ network 192.168.80.32 255.255.255.224
+ default-router 192.168.80.33
+ domain-name TRUSTCONDOM.com
+ dns-server 8.8.8.8
+
+INT E1/0
+switchport mode access
+switchport access vlan 5
+end
+
+S1: 
+CONFIG T
+INT E1/0
+ip address dhcp
+no shut
+
+do bp
