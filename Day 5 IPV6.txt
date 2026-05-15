@@ -1,0 +1,188 @@
+
+
+
+1. 2001:db8:: /64 - for documentation
+2. :: /0 - default gateway
+3. fe80::a:0:0:f /10 
+4. fd00:0:0:3000:: /64
+5. ::1 /128
+6. ff00::beef:a00a:aa0:0:0 /12
+
+
+
+
+| Prefix | Hextet | Hexadecimal | i   |
+| ---    | ---    | ---         | --- |
+| /32    |2       |  4          |  1  |
+| /41    | 3       |   3          | 8    |         
+| /70    |   5     |    2         | 4    |
+| /7     |    1    |    3         | 2    |
+| /111   |  7      |    4         |  2   |
+| /124   |  8      |    3         |  1   |
+
+1. subnet for 8 offices using network address fd00:1::/64
+Convert - 8 = 3 bits
+Add bits to existing slash/subnet = 3 + 64 = /67 (5th,1st,2i) 
+
+2. subnet for 4 offices using network address fd00:2::/88
+Convert - 4 = 2 bits			hextet | hexadecimnal | i
+add bits to subnet = 2+88 = /90     	6	 3rd		4
+
+fd00:0002:0000:0000:0000:0000:0000:0000:/90  = fd00:2::/90 
+fd00:0002:0000:0000:0000:0040:0000:0000:/90  = fd00:2::40:0:0/90 
+				1st usable:    fd00:2::41:0:0/90 
+				Last nonAny:   fd00:2::7F:FFFF:FF7F/90 
+				1st anyIP:     fd00:2::7F:FFFF:FF80/90 
+				Last usable:   fd00:2::7F:FFFF:FFFF/90 
+				not yours :    fd00:2::80:0:0/90 
+fd00:0002:0000:0000:0000:0080:0000:0000:/90  = fd00:2::80:0:0/90 
+fd00:0002:0000:0000:0000:00C0:0000:0000:/90  = fd00:2::C0:0:0/90 
+
+
+3. subnet for 52 offices using network address fd00:3:0:33::/112 determine the 6th subnet 
+
+convert 52= 6bits 			hextet | hexadecimnal | i
+add: 112 + 6 = /118 			8	 2nd		4
+
+fd00:3:0:33::0400/118
+fd00:3:0:33::0800/118
+fd00:3:0:33::0C00/118
+fd00:3:0:33::1000/118
+network: fd00:3:0:33::1400/118 6th office
+1st usable: fd00:3:0:33::1401
+Last nonAny: fd00:3:0:33::177F
+1st anyIP: fd00:3:0:33::1780
+Last usable: fd00:3:0:33::17FF
+not yours next increment = fd00:3:0:33::1800/118
+
+R4
+conf t
+ ipv6 unicast-routing              
+ int e0/3
+ no shut
+ ipv6 add fd00:3:0:33::1401/118
+end
+
+
+R3
+conf t
+ ipv6 unicast-routing              
+ int e0/3
+ no shut
+ no ipv6 add fd00:3:0:33::17FF/118
+ ipv6 add fd00:3:0:33::177F/118
+end
+ping fd00:3:0:33::1401
+
+
+Reserve Anycast is:
+ -Network Address
+ -The last 128 address (:FF80: - :FFFF:) on a /1 - /120 
+
+
+Implement IPv6
+Manual
+EUI-64 > /64
+SLAAC  > 
+
+
+EDGE
+
+conf t 
+ ipv6 unicast-routing
+ int g0/0/1
+  no shut
+  ipv6 add 2001:0:0:51::/64 eui-64
+end
+
+conf t 
+ ipv6 unicast-routing
+ int g0/0/1
+  no shut
+  ipv6 add autoconfig
+end
+
+
+
+VLan 1 cbaba
+mac address f025.72e9.5a40
+
+
+
+conf t
+ default int range f0/10-12
+end
+
+C1
+conf t
+ int range e0/0-3, e1/2-3
+ switch trunk encaps dot
+ switch mode trunk
+ switch trunk allow vlan all
+ switch trunk native vlan 1
+ end
+
+
+C2
+conf t
+ int range e0/0-3, e1/2-3
+ switch trunk encaps dot
+ switch mode trunk
+ switch trunk allow vlan all
+ switch trunk native vlan 1
+ end
+
+A1
+conf t
+ int range e0/0-3, e1/0
+ switch trunk encaps dot
+ switch mode trunk
+ switch trunk allow vlan all
+ switch trunk native vlan 1
+ end
+
+A2
+conf t
+ int range e0/0-3
+ switch trunk encaps dot
+ switch mode trunk
+ switch trunk allow vlan all
+ switch trunk native vlan 1
+ end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
